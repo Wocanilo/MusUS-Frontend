@@ -53,7 +53,6 @@
                     id="password"
                     v-model="form.password"
                     type="password"
-                    :state="form.password.length >= 8"
                     placeholder="Password"
                     required
                   ></b-form-input>

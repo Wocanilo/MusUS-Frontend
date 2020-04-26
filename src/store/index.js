@@ -84,7 +84,12 @@ export default new Vuex.Store({
       apiBaseUrl: "http://api.musus.wocat.xyz:8080/"
     }
   },
-  mutations: {},
+  mutations: {
+    // Update cards with real data
+    changeCards(state, data){
+      state.cards = data;
+    }
+  },
   actions: {},
   modules: {account},
   plugins: [createPersistedState({

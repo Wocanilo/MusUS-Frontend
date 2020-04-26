@@ -4,13 +4,13 @@
       <b-row cols="1" cols-sm="2" cols-md="4" cols-lg="6">
         <b-col v-for="item in cards" :key="item.id" class="mx-auto mb-3">
           <div class="card h-100">
-            <b-img class="card-img-top" :src="item.pictureUrl"/>
+            <b-img class="card-img-top" :src="item.isExternal ? item.URL : config.apiBaseUrl + item.URL"/>
             <div class="card-body">
               <!-- Picture data-->
               <div class="row">
                 <div class="col">
                   <i class="far fa-calendar"></i>
-                  26/03/2020
+                  {{ item.createdAt }}
                 </div>
                 <div class="col">
                   <div class="float-right">
@@ -44,7 +44,8 @@ export default {
   // Get the cards from the storage
   computed: mapState({
     cards: state => state.cards,
-    userData: status => status.userData
+    userData: status => status.userData,
+    config: status => status.config
   })
 };
 </script>

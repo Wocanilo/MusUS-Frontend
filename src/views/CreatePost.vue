@@ -1,0 +1,160 @@
+<template>
+  <div class="createpost">
+    <div>
+      <h1 class="text-center">Create Post</h1>
+    </div>
+    <!-- Trees separator -->
+    <img src="@/assets/img/forest.jpg" class="img-fluid w-100" alt="MusUS logo" />
+    <!-- Content -->
+    <section>
+      <b-container>
+        <b-row>
+          <b-col>
+            <b-jumbotron>
+              <b-form @submit="signup">
+                <b-form-group label="Title:" label-for="title">
+                  <b-form-input
+                    id="title"
+                    v-model="form.title"
+                    type="text"
+                    placeholder="A beautiful title"
+                    required
+                  ></b-form-input>
+                </b-form-group>
+                
+                <b-form-group label="Type:">
+                    <b-form-radio-group id="external" v-model="form.isExternal" name="external" required>
+                        <b-form-radio value="URL">URL</b-form-radio>
+                        <b-form-radio value="File">File upload</b-form-radio>
+                    </b-form-radio-group>
+                </b-form-group>
+
+                <b-form-group label="File:" v-if="form.isExternal == 'File'">
+                    <b-form-file
+                    v-model="form.file"
+                    placeholder="Choose a file or drop it here..."
+                    drop-placeholder="Drop file here..."
+                    accept="image/jpeg, image/png"
+                    required
+                    ></b-form-file>
+                </b-form-group>
+
+                <b-form-group label="URL:" label-for="url" v-if="form.isExternal == 'URL'">
+                  <b-form-input
+                    id="url"
+                    v-model="form.url"
+                    type="url"
+                    placeholder="URL"
+                    required
+                  ></b-form-input>
+                </b-form-group>
+
+                <b-form-group label="Description:" label-for="description">
+                    <b-form-textarea id="description" placeholder="An awesome description here..." rows="3" max-rows="5" v-model="form.description" required></b-form-textarea>
+                </b-form-group>
+
+                <b-form-group label="Visibility:">
+                    <b-form-radio-group id="visibility" v-model="form.visibility" name="visibility" required>
+                        <b-form-radio value="Public">Public</b-form-radio>
+                        <b-form-radio value="Private">Private</b-form-radio>
+                    </b-form-radio-group>
+                        <b-form-text id="public-help-block" v-if="form.visibility == 'Public'">
+                        Public posts can be seen by anyone!
+                        </b-form-text>
+                        <b-form-text id="private-help-block" v-if="form.visibility == 'Private'">
+                        Private posts can only be seen by followers.
+                        </b-form-text>
+                </b-form-group>
+
+                <b-form-group label="Tags:" label-for="tags">
+                  <b-form-input
+                    id="tags"
+                    v-model="form.tags"
+                    type="text"
+                    placeholder="Cool, futuristic..."
+                    required
+                  ></b-form-input>
+                </b-form-group>
+
+                <div class="text-center">
+                  <b-button type="submit" variant="primary">Create Post</b-button>
+                </div>
+              </b-form>
+            </b-jumbotron>
+          </b-col>
+        </b-row>
+      </b-container>
+    </section>
+  </div>
+</template>
+
+<script>
+import { mapState } from "vuex";
+import axios from "axios";
+
+export default {
+  name: "CreatePost",
+  // Data needed from Vuex
+  components: {},
+  computed: mapState({
+    config: state => state.config,
+    userData: state => state.account,
+    passwordsMatch: function() {
+      return (
+        this.form.password == this.form.repeatPassword &&
+        this.form.repeatPassword.length > 0
+      );
+    }
+  }),
+  // Form data
+  data() {
+    return {
+      form: {
+        title: "",
+        isExternal: "",
+        url: "",
+        file: null,
+        description: "",
+        tags: "",
+        visibility: ""
+      }
+    };
+  },
+  // Methods available to the view
+  methods: {
+    signup(evt) {
+        evt.preventDefault();
+        let formData = new FormData();
+
+        if(this.form.isExternal == "File" && this.form.file != null){
+            // Uploading file
+            formData.append("file", this.form.file);
+        } else if(this.form.isExternal == "URL" && this.form.url != ""){
+            // Uploading URL
+            formData.append("url", this.form.url);
+        }
+        formData.append("title", this.form.title);
+        formData.append("description", this.form.description);
+        formData.append("tags", this.form.tags);
+        formData.append("visibility", this.form.visibility);
+
+        axios({
+        method: "POST",
+        url: this.config.apiBaseUrl + "post.php",
+        withCredentials: true,
+        data: formData
+        })
+        .then(response => {
+            if (response.data.status == 200) {
+            this.$router.push("/login");
+            } else {
+            this.form.validForm = false;
+            }
+        })
+        .then(function(error) {
+            console.log(error);
+        });
+    }
+  }
+};
+</script>
