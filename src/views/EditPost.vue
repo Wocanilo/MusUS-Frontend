@@ -1,7 +1,7 @@
 <template>
-  <div class="createpost">
+  <div class="editpost">
     <div>
-      <h1 class="text-center">Create Post</h1>
+      <h1 class="text-center">Edit Post</h1>
     </div>
     <!-- Trees separator -->
     <img src="@/assets/img/forest.jpg" class="img-fluid w-100" alt="MusUS logo" />
@@ -11,7 +11,7 @@
         <b-row>
           <b-col>
             <b-jumbotron>
-              <b-form @submit="CreatePost">
+              <b-form @submit="editPost">
                 <b-form-group label="Title:" label-for="title">
                   <b-form-input
                     id="title"
@@ -24,8 +24,8 @@
                 
                 <b-form-group label="Type:">
                     <b-form-radio-group id="external" v-model="form.isExternal" name="external" required>
-                        <b-form-radio value="URL">URL</b-form-radio>
-                        <b-form-radio value="File">File upload</b-form-radio>
+                        <b-form-radio id="isURL" value="URL">URL</b-form-radio>
+                        <b-form-radio id="isFile" value="File">File upload</b-form-radio>
                     </b-form-radio-group>
                 </b-form-group>
 
@@ -35,8 +35,10 @@
                     placeholder="Choose a file or drop it here..."
                     drop-placeholder="Drop file here..."
                     accept="image/jpeg, image/png"
-                    required
                     ></b-form-file>
+                    <b-form-invalid-feedback :state="form.fileTooLarge">
+                        File too large.
+                    </b-form-invalid-feedback>
                 </b-form-group>
 
                 <b-form-group label="URL:" label-for="url" v-if="form.isExternal == 'URL'">
@@ -45,7 +47,6 @@
                     v-model="form.url"
                     type="url"
                     placeholder="URL"
-                    required
                   ></b-form-input>
                 </b-form-group>
 
@@ -55,8 +56,8 @@
 
                 <b-form-group label="Visibility:">
                     <b-form-radio-group id="visibility" v-model="form.visibility" name="visibility" required>
-                        <b-form-radio value="Public">Public</b-form-radio>
-                        <b-form-radio value="Private">Private</b-form-radio>
+                        <b-form-radio id="isPublic" value="Public">Public</b-form-radio>
+                        <b-form-radio id="isPrivate" value="Private">Private</b-form-radio>
                     </b-form-radio-group>
                         <b-form-text id="public-help-block" v-if="form.visibility == 'Public'">
                         Public posts can be seen by anyone!
@@ -77,7 +78,8 @@
                 </b-form-group>
 
                 <div class="text-center">
-                  <b-button type="submit" variant="primary">Create Post</b-button>
+                  <b-button type="submit" variant="primary">Save changes</b-button>
+                  <b-button class="ml-1" v-on:click="deletePost" variant="danger">Delete Post</b-button>
                 </div>
               </b-form>
             </b-jumbotron>
@@ -93,7 +95,7 @@ import { mapState } from "vuex";
 import axios from "axios";
 
 export default {
-  name: "CreatePost",
+  name: "EditPost",
   // Data needed from Vuex
   components: {},
   computed: mapState({
@@ -116,13 +118,76 @@ export default {
         file: null,
         description: "",
         tags: "",
-        visibility: ""
+        visibility: "",
+        fileTooLarge: true
       }
     };
   },
+    watch: {
+    // Call the method if the route changes
+    $route: "loadPostData"
+  },
+  created() {
+      this.loadPostData();
+  },
   // Methods available to the view
   methods: {
-    CreatePost(evt) {
+    loadPostData() {
+      this.error = this.post = null;
+      this.loading = true;
+
+      axios({
+        method: "GET",
+        url: this.config.apiBaseUrl + "getPosts.php",
+        withCredentials: true,
+        params: {
+          pictureId: this.$route.params.id,
+          action: "getPost"
+        }
+      })
+        .then(response => {
+          if (response.data.status == 200) {
+            // Update values
+            document.getElementById("title").value = response.data.data.title;
+            this.form.title = response.data.data.title;
+
+            if(response.data.data.isExternal == 0){
+                document.getElementById("isFile").checked = true;
+                this.form.isExternal = "File";
+            }else{
+                document.getElementById("isURL").checked = true;
+                this.form.isExternal = "URL";
+
+                this.form.url = response.data.data.URL; 
+            }
+
+            document.getElementById("description").value = response.data.data.description;
+            this.form.description = response.data.data.description;
+
+            if(response.data.data.visibility == 1){
+                // Is public
+                document.getElementById("isPublic").checked = true;
+                this.form.visibility = "Public";
+            }else{
+                document.getElementById("isPrivate").checked = true;
+                this.form.visibility = "Private";
+            }
+
+            document.getElementById("tags").value = response.data.data.tags;
+            this.form.tags = response.data.data.tags;
+
+
+          } else {
+            // Logout user
+            this.$store.commit("logout");
+            this.$router.push("/");
+          }
+        })
+        .then(error => {
+          this.error = error;
+        });
+    },
+    editPost(evt) {
         evt.preventDefault();
         let formData = new FormData();
 
@@ -137,6 +202,7 @@ export default {
         formData.append("description", this.form.description);
         formData.append("tags", this.form.tags);
         formData.append("visibility", this.form.visibility);
+        formData.append("pictureId", this.$route.params.id);
 
         axios({
         method: "POST",
@@ -146,9 +212,31 @@ export default {
         })
         .then(response => {
             if (response.data.status == 200) {
-            this.$router.push("/post/" + response.data.postId);
-            } else {
+            this.$router.push("/post/" + this.$route.params.id);
+            }else if(response.data.status == 413){
+                this.form.fileTooLarge = false;
+            } 
+            else {
             this.form.validForm = false;
+            }
+        })
+        .then(function(error) {
+            console.log(error);
+        });
+    },
+    deletePost(evt){
+      evt.preventDefault();
+      axios({
+        method: "DELETE",
+        url: this.config.apiBaseUrl + "post.php",
+        withCredentials: true,
+        data: {
+          "pictureId": this.$route.params.id
+        }
+        })
+        .then(response => {
+            if (response.data.status == 200) {
+              this.$router.push("/");
             }
         })
         .then(function(error) {

@@ -83,7 +83,7 @@ export default {
       })
         .then(response => {
           if (response.data.status == 200) {
-            this.$store.commit('login')
+            this.$store.commit('login', response.data.userData)
             this.$router.push("/");
           } else {
             this.form.validForm = false;

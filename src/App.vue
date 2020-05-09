@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <b-nav class="navbar navbar-light sticky-top bg-white">
+    <b-nav class="navbar navbar-light sticky-top bg-white mb-2">
       <div class="navbar-brand mb-0 h1">
         <img
           src="@/assets/img/logo.svg"
@@ -15,9 +15,9 @@
       <!-- Authenticated users -->
       <div v-if="userData.isLoggedIn">
         <b-link class="mr-3" to="/dashboard">Dashboard</b-link>
-        <b-link class="mr-3" to="/profile">Profile</b-link>
         <b-link class="mr-3" to="/createPost">Post</b-link>
-        <b-link to="/logout">Logout</b-link>
+          <b-link class="mr-3" :to="'/profile/' + userData.userId">{{ userData.username }}</b-link>
+        <b-link @click="logout">Logout</b-link>
       </div>
 
       <!-- Anonymous users -->
@@ -39,6 +39,15 @@ export default {
   },
   computed: mapState({
     userData: status => status.account
-  })
+  }),
+  methods: {
+    logout(evt) {
+      evt.preventDefault();
+      this.$store.commit("logout");
+      if(this.$router.currentRoute.path != "/"){
+          this.$router.push("/"); 
+      }
+    }
+  }
 };
 </script>
