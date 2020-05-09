@@ -65,7 +65,7 @@
         <div class="row">
           <div class="col text-center">
             <font-awesome-icon icon="tags"></font-awesome-icon>
-            {{ post.tags }}
+              <b-badge class="ml-1" variant="info" v-for="item in post.tags" :key="item.id">{{item.tag}} </b-badge>
           </div>
         </div>
       </b-container>

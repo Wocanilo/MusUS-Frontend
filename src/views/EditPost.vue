@@ -67,14 +67,18 @@
                         </b-form-text>
                 </b-form-group>
 
+
                 <b-form-group label="Tags:" label-for="tags">
-                  <b-form-input
-                    id="tags"
-                    v-model="form.tags"
-                    type="text"
-                    placeholder="Cool, futuristic..."
-                    required
-                  ></b-form-input>
+                  <b-form-tags
+                    input-id="tags"
+                    v-model="form.tags" 
+                    tag-variant="info"
+                    separator=" ,;"
+                    placeholder="Enter new tags separated by space, comma or semicolon"
+                    no-add-on-enter
+                    remove-on-delete
+                    class="mb-2"
+                  ></b-form-tags>
                 </b-form-group>
 
                 <div class="text-center">
@@ -173,8 +177,13 @@ export default {
                 this.form.visibility = "Private";
             }
 
-            document.getElementById("tags").value = response.data.data.tags;
-            this.form.tags = response.data.data.tags;
+            // Clean tags
+            let tags = [];
+            response.data.data.tags.forEach(element => {
+                tags.push(element.tag);
+            });
+            document.getElementById("tags").value = tags;
+            this.form.tags = tags;
 
 
           } else {

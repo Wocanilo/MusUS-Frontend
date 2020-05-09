@@ -67,13 +67,16 @@
                 </b-form-group>
 
                 <b-form-group label="Tags:" label-for="tags">
-                  <b-form-input
-                    id="tags"
-                    v-model="form.tags"
-                    type="text"
-                    placeholder="Cool, futuristic..."
-                    required
-                  ></b-form-input>
+                  <b-form-tags
+                    input-id="tags"
+                    v-model="form.tags" 
+                    tag-variant="info"
+                    separator=" ,;"
+                    placeholder="Enter new tags separated by space, comma or semicolon"
+                    no-add-on-enter
+                    remove-on-delete
+                    class="mb-2"
+                  ></b-form-tags>
                 </b-form-group>
 
                 <div class="text-center">
@@ -115,7 +118,7 @@ export default {
         url: "",
         file: null,
         description: "",
-        tags: "",
+        tags: [],
         visibility: ""
       }
     };
