@@ -73,8 +73,8 @@
                     input-id="tags"
                     v-model="form.tags" 
                     tag-variant="info"
-                    separator=" ,;"
-                    placeholder="Enter new tags separated by space, comma or semicolon"
+                    separator=",;"
+                    placeholder="Enter new tags separated by comma or semicolon"
                     no-add-on-enter
                     remove-on-delete
                     class="mb-2"
@@ -82,6 +82,9 @@
                 </b-form-group>
 
                 <div class="text-center">
+                  <b-form-invalid-feedback :state="form.cantDeleteComments">
+                    Posts with comments can't be deleted.
+                  </b-form-invalid-feedback>
                   <b-button type="submit" variant="primary">Save changes</b-button>
                   <b-button class="ml-1" v-on:click="deletePost" variant="danger">Delete Post</b-button>
                 </div>
@@ -123,7 +126,8 @@ export default {
         description: "",
         tags: "",
         visibility: "",
-        fileTooLarge: true
+        fileTooLarge: true,
+        cantDeleteComments: true
       }
     };
   },
@@ -246,6 +250,8 @@ export default {
         .then(response => {
             if (response.data.status == 200) {
               this.$router.push("/");
+            } else if(response.data.status == 409){
+              this.form.cantDeleteComments = false;
             }
         })
         .then(function(error) {

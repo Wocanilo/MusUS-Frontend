@@ -11,8 +11,8 @@
               <footer class="text-muted">
                 <a :href="'mailto:' + profile.email">{{ profile.email }}</a>
                 <form action="#">
-                  <button v-on:click="followUser" class="btn btn-link" v-if="$route.params.id != userData.userId && userData.followedUsers.indexOf($route.params.id) < 0">Follow</button>
-                  <button v-on:click="unFollowUser" class="btn btn-link" v-if="$route.params.id != userData.userId && userData.followedUsers.indexOf($route.params.id) >= 0">Unfollow</button>                </form>
+                  <button v-on:click="followUser" class="btn btn-link" v-if="parseInt($route.params.id) != userData.userId && userData.followedUsers.indexOf(parseInt($route.params.id)) < 0">Follow</button>
+                  <button v-on:click="unFollowUser" class="btn btn-link" v-if="parseInt($route.params.id) != userData.userId && userData.followedUsers.indexOf(parseInt($route.params.id)) >= 0">Unfollow</button>                </form>
               </footer>
             </blockquote>
           </b-col>
@@ -47,7 +47,8 @@ export default {
       loading: false,
       profile: null,
       error: null,
-      posts: []
+      posts: [],
+      followBlock: false
     };
   },
   mounted() {
@@ -107,39 +108,42 @@ export default {
           this.error = error;
         });
     },
-    followUser(evt){
-      evt.preventDefault();
-        let formData = new FormData();
-        formData.append("action", "follow");
-        formData.append("userId", this.$route.params.id);
-        
-      axios({
-        method: "POST",
-        url: this.config.apiBaseUrl + "profile.php",
-        withCredentials: true,
-        data: formData
-      })
-        .then(response => {
-          if (response.data.status == 200) {
-              let newFollowedUsers = this.userData.followedUsers;
-              newFollowedUsers.push(this.$route.params.id);
-              this.$store.commit('updateFollowed', newFollowedUsers);
-          } else {
-            console.log(response.data);
-          }
+    followUser(){
+        if(!this.followBlock){
+          this.followBlock = true;
+          let formData = new FormData();
+          formData.append("action", "follow");
+          formData.append("userId", parseInt(this.$route.params.id));
+          
+        axios({
+          method: "POST",
+          url: this.config.apiBaseUrl + "profile.php",
+          withCredentials: true,
+          data: formData
         })
-        .then(function(error) {
-          console.log(error);
-          // Reenable button
-          this.disableCommentButton = true;
-        });
+          .then(response => {
+            if (response.data.status == 200) {
+                let newFollowedUsers = this.userData.followedUsers;
+                newFollowedUsers.push(parseInt(this.$route.params.id));
+                this.$store.commit('updateFollowed', newFollowedUsers);
+            } else {
+              console.log(response.data);
+            }
+          })
+          .then(function(error) {
+            console.log(error);
+            // Reenable button
+            this.disableCommentButton = true;
+          });
+          this.followBlock = false;
+        }
     },
-    unFollowUser(evt){
-      evt.preventDefault();
-
+    unFollowUser(){
+      if(!this.followBlock){
+        this.followBlock = true;
         let formData = new FormData();
         formData.append("action", "unfollow");
-        formData.append("userId", this.$route.params.id);
+        formData.append("userId", parseInt(this.$route.params.id));
         
       axios({
         method: "POST",
@@ -150,7 +154,9 @@ export default {
         .then(response => {
           if (response.data.status == 200) {
               let newFollowedUsers = this.userData.followedUsers;
-              newFollowedUsers.pop(newFollowedUsers.indexOf(this.$route.params.id));
+              let location = newFollowedUsers.indexOf(parseInt(parseInt(this.$route.params.id)));
+              if(location >=0) newFollowedUsers.splice(location, 1);
+              
               this.$store.commit('updateFollowed', newFollowedUsers);
           } else {
             console.log(response.data);
@@ -161,6 +167,8 @@ export default {
           // Reenable button
           this.disableCommentButton = true;
         });
+        this.followBlock = false;
+      }
     }
   }
 };

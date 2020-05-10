@@ -22,8 +22,7 @@ export default {
     Cards
   },
     computed: mapState({
-    config: state => state.config,
-    cards: state => state.cards
+    config: state => state.config
   }),
   data(){
     return {

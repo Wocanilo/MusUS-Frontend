@@ -6,14 +6,12 @@
         <b-row>
           <b-col>
             <blockquote class="blockquote text-center">
-              <h1 class="mb-0">{{ post.title }}</h1>
-              <footer class="text-muted">
-                <b-link class="mr-3" :to="'/profile/' + post.userId">@{{ post.username }}</b-link>
+                <h1 class="mb-0">{{ post.title }}</h1>
+                <b-link :to="'/profile/' + post.userId">@{{ post.username }}</b-link>
                 <form action="#">
                   <button v-on:click="followUser" class="btn btn-link" v-if="post.userId != userData.userId && userData.followedUsers.indexOf(post.userId) < 0">Follow</button>
                   <button v-on:click="unFollowUser" class="btn btn-link" v-if="post.userId != userData.userId && userData.followedUsers.indexOf(post.userId) >= 0">Unfollow</button>
                 </form>
-              </footer>
             </blockquote>
           </b-col>
         </b-row>
@@ -52,7 +50,7 @@
           </b-col>
           <b-col class="mb-2">
             <div class="float-right">
-              <font-awesome-icon icon="thumbs-up" class="mr-1"></font-awesome-icon>20 likes
+              <font-awesome-icon icon="thumbs-up" class="mr-1"></font-awesome-icon>{{ post.votes }} <span v-if="post.votes == 1">Vote</span> <span v-else>Votes</span>
             </div>
           </b-col>
         </b-row>
@@ -83,12 +81,12 @@
       <Comments v-bind:comments="comments"></Comments>
 
       <!-- New comment -->
-      <div class="container">
-        <div class="border-top my-4"></div>
+      <b-container>
+        <div class="border-top "></div>
         <!-- Horizontal separator -->
-        <div class="row">
-          <div class="col">
-            <div class="card">
+        <b-row>
+          <b-col>
+            <div class="card my-4">
               <div class="card-body">
                 <b-form @submit="commentPost">
                   <b-form-group>
@@ -106,9 +104,10 @@
                 </b-form>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+          </b-col>
+        </b-row>
+      </b-container>
+
     </section>
   </div>
 </template>
@@ -298,7 +297,6 @@ export default {
         });
         this.followBlock = false;
       }
-
     },
     votePicture(){
       if(!this.voteBlock){
@@ -322,6 +320,7 @@ export default {
                 // Condicion de carrera con la lista, comprobar en follow tambien
                 this.$store.commit('updatePictureVotes', newpictureVotes);
                 this.showHeartFull = true;
+                this.post.votes++;
                 //Waste 1 second
                 setTimeout(() => {
                   this.showHeartFull = false;
@@ -351,6 +350,7 @@ export default {
 
                 this.$store.commit('updatePictureVotes', newpictureVotes);
                 this.showHeartNotFull = true;
+                this.post.votes--;
                 //Waste 1 second
                 setTimeout(() => {
                   this.showHeartNotFull = false;
