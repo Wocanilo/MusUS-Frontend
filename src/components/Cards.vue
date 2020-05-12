@@ -14,13 +14,15 @@
                 <div class="col">
                   <div class="float-right">
                     <font-awesome-icon icon="thumbs-up"></font-awesome-icon>
-                    {{ item.votes }} <span v-if="item.votes == 1">Vote</span> <span v-else>Votes</span>
+                    {{ item.positive }}
+                    <font-awesome-icon icon="thumbs-down"></font-awesome-icon>
+                    {{ item.negative }}
                   </div>
                 </div>
               </div>
               <div class="border-top my-4"></div>
               <!-- Horizontal separator -->
-              <p>{{ item.title }}</p>
+              <h5>{{ item.title }}</h5>
               <b-card-text>
                 {{ item.description }}
               </b-card-text>

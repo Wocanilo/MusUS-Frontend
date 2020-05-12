@@ -19,7 +19,7 @@
                       <font-awesome-icon icon="search"></font-awesome-icon>
                     </div>
                   </div>
-                  <b-input type="text" id="search" placeholder="Search" v-model="search" ></b-input>
+                  <b-input type="text" id="search" :placeholder="searchType == 'tagsPosts' ? 'Search by tag' : 'Search by title'" v-model="search" @keyup="searchPostTimer"></b-input>
                   <b-input-group-prepend>
                     <b-form-radio-group
                       id="btn-radios-1"
@@ -92,28 +92,56 @@ export default {
   }),
   data() {
     return {
-      searchType: "all",
+      searchType: "followingPosts",
       search: "",
+      searchWaitingToExecute: null,
       cards: [],
       options: [
-          { text: 'All', value: 'all' },
-          { text: 'Following', value: 'following' },
-          { text: 'Trending', value: 'trending' },
-          { text: 'Tag', value: 'tag' },
+          { text: 'Following', value: 'followingPosts' },
+          { text: 'Trending', value: 'trendingPosts' },
+          { text: 'Tag', value: 'tagsPosts' },
           { text: 'User', value: 'user' }
         ]
     };
   },
-  mounted() {},
+  mounted() {
+      axios({
+        method: "GET",
+        url: this.config.apiBaseUrl + "getPosts.php",
+        withCredentials: true,
+        params: {
+          action: this.searchType,
+          search: this.search
+        }
+      })
+        .then(response => {
+          if (response.data.status == 200) {
+            this.cards = response.data.data;
+          }
+        })
+        .then(error => {
+          this.error = error;
+        });
+  },
   methods: {
     searchRadioChange(value){
-      if(value == "following"){
+      this.searchType = value;
+      this.searchPosts();
+    },
+    searchPostTimer(){
+      if(this.searchWaitingToExecute == null){
+        this.searchWaitingToExecute = this.search;
+        setTimeout(this.searchPosts, 200);
+      }
+    },
+    searchPosts(){
+          if(this.searchWaitingToExecute == this.search){
           axios({
             method: "GET",
             url: this.config.apiBaseUrl + "getPosts.php",
             withCredentials: true,
             params: {
-              action: "followingPosts",
+              action: this.searchType,
               search: this.search
             }
           })
@@ -125,7 +153,11 @@ export default {
             .then(error => {
               this.error = error;
             });
-      }
+            this.searchWaitingToExecute = null;
+          }else{
+            this.searchWaitingToExecute = null;
+            this.searchPostTimer();
+          }
     }
   }
 };

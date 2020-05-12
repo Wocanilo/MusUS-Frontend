@@ -6,7 +6,7 @@ import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCalendar, faThumbsUp, faEdit, faTags,faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faCalendar, faThumbsUp, faEdit, faTags,faSearch, faThumbsDown, faHeartBroken } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 library.add(faCalendar)
@@ -14,6 +14,8 @@ library.add(faThumbsUp)
 library.add(faEdit)
 library.add(faTags)
 library.add(faSearch)
+library.add(faThumbsDown)
+library.add(faHeartBroken)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

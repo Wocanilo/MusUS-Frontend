@@ -20,7 +20,7 @@
 
     <section v-if="post">
       <b-container class="text-center">
-      <b-overlay :show="showHeartFull || showHeartNotFull">
+      <b-overlay :show="showHeartFull || showHeartNotFull || showHeartBroken">
         <img
           :src="post.isExternal ? post.URL : config.apiBaseUrl + post.URL"
           class="img-fluid"
@@ -33,6 +33,9 @@
         </div>
         <div class="text-center" v-if="showHeartNotFull">
           <b-icon icon="heart" font-scale="5"></b-icon>
+        </div>
+        <div class="text-center" v-if="showHeartBroken">
+          <font-awesome-icon icon="heart-broken" size="5x"></font-awesome-icon>
         </div>
       </template>
     </b-overlay>
@@ -50,7 +53,7 @@
           </b-col>
           <b-col class="mb-2">
             <div class="float-right">
-              <font-awesome-icon icon="thumbs-up" class="mr-1"></font-awesome-icon>{{ post.votes }} <span v-if="post.votes == 1">Vote</span> <span v-else>Votes</span>
+              <font-awesome-icon icon="thumbs-up" class="mr-1" v-on:click="votePicture"></font-awesome-icon>{{ post.positive }}<font-awesome-icon class="ml-1 mr-1" icon="thumbs-down" id="thumbsDown" v-on:click="votePicture"></font-awesome-icon>{{ post.negative }}
             </div>
           </b-col>
         </b-row>
@@ -60,7 +63,7 @@
         </div>
 
         <!-- Tags -->
-        <div class="row">
+        <div class="row" v-if="post.tags.length != 0">
           <div class="col text-center">
             <font-awesome-icon icon="tags"></font-awesome-icon>
               <b-badge class="ml-1" variant="info" v-for="item in post.tags" :key="item.id">{{item.tag}} </b-badge>
@@ -142,6 +145,7 @@ export default {
       disableCommentButton: false,
       showHeartFull: false,
       showHeartNotFull: false,
+      showHeartBroken: false,
       followBlock: false,
       voteBlock: false
     };
@@ -259,8 +263,6 @@ export default {
           })
           .then(function(error) {
             console.log(error);
-            // Reenable button
-            this.disableCommentButton = true;
           });
           this.followBlock = false;
         }
@@ -292,38 +294,60 @@ export default {
         })
         .then(function(error) {
           console.log(error);
-          // Reenable button
-          this.disableCommentButton = true;
         });
         this.followBlock = false;
       }
     },
-    votePicture(){
+    votePicture(evt){
       if(!this.voteBlock){
         this.voteBlock = true;
         let newpictureVotes = this.userData.pictureVotes;
-        let pictureID = this.$route.params.id;
+        let pictureID = parseInt(this.$route.params.id);
+        let voteType = evt.currentTarget.id == "thumbsDown" ?  "negative" : "positive"
+        let found = false;
+        let foundType = null;
+        let foundPosition = 0;
 
-      if(newpictureVotes.indexOf(parseInt(pictureID)) < 0){
+        // Find the id in the array
+        for(var i=0; i<newpictureVotes.length; i++){
+          if(newpictureVotes[i].id == pictureID){
+            found = true;
+            foundPosition = i;
+            foundType = newpictureVotes[i].isPositive;
+            break;
+          }
+        }
+
+      if(!found){
         axios({
           method: "GET",
           url: this.config.apiBaseUrl + "getPosts.php",
           withCredentials: true,
           params: {
             pictureId: pictureID,
-            action: "votePost"
+            action: "votePost",
+            type: voteType
           }
         })
           .then(response => {
             if (response.data.status == 200) {
-                newpictureVotes.push(parseInt(pictureID));
-                // Condicion de carrera con la lista, comprobar en follow tambien
+                newpictureVotes.push({"id": pictureID, "isPositive": voteType == "negative" ? 0 : 1});
                 this.$store.commit('updatePictureVotes', newpictureVotes);
-                this.showHeartFull = true;
-                this.post.votes++;
+
+                if(voteType == "negative"){
+                  this.showHeartBroken = true;
+                  this.post.negative++;
+                }else{
+                  this.showHeartFull = true;
+                  this.post.positive++;
+                }
+                
+                
                 //Waste 1 second
                 setTimeout(() => {
                   this.showHeartFull = false;
+                  this.showHeartBroken = false;
+                  this.voteBlock = false;
                 }, 600)
             } else {
               console.log(response.data);
@@ -345,15 +369,21 @@ export default {
 
           .then(response => {
             if (response.data.status == 200) {
-                let location = newpictureVotes.indexOf(parseInt(pictureID));
-                if(location >=0) newpictureVotes.splice(location, 1);
+                if(foundPosition >=0) newpictureVotes.splice(foundPosition, 1);
 
                 this.$store.commit('updatePictureVotes', newpictureVotes);
                 this.showHeartNotFull = true;
-                this.post.votes--;
+
+                if(foundType == 0){
+                  this.post.negative--;
+                }else{
+                  this.post.positive--;
+                }
+                
                 //Waste 1 second
                 setTimeout(() => {
                   this.showHeartNotFull = false;
+                  this.voteBlock = false;
                 }, 600)
             } else {
               console.log(response.data);
@@ -363,7 +393,6 @@ export default {
             console.log(error);
           });
       }
-        this.voteBlock = false;
       }
 
     }

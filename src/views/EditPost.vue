@@ -73,8 +73,8 @@
                     input-id="tags"
                     v-model="form.tags" 
                     tag-variant="info"
-                    separator=",;"
-                    placeholder="Enter new tags separated by comma or semicolon"
+                    separator=" ,;"
+                    placeholder="Enter new tags separated by space, comma or semicolon"
                     no-add-on-enter
                     remove-on-delete
                     class="mb-2"

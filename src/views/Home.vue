@@ -35,6 +35,8 @@ export default {
         this.cards = response.data.data;
       }
     })
+  },
+  methods: {
   }
 };
 </script>
