@@ -1,18 +1,16 @@
 <template>
   <div class="Cards">
-    <b-container fluid class="mt-3">
-      <b-row cols="1" cols-sm="2" cols-md="4" cols-lg="6" col-xs="6">
-        <b-col v-for="item in cards" :key="item.id" class="mx-auto mb-3">
-          <b-card :img-src="item.isExternal ? item.URL : config.apiBaseUrl + item.URL" :img-alt="item.title" class="h-100">
-            <div class="card-body">
+    <b-container class="mt-3" fluid="xl">
+        <b-card-group columns>
+          <b-card v-for="item in cards" :key="item.id"  class="shadow-sm" :img-src="item.isExternal ? item.URL : config.apiBaseUrl + item.URL" :img-alt="item.title">
+            <b-card-body>
               <!-- Picture data-->
               <div class="row">
                 <div class="col">
-                  <font-awesome-icon icon="calendar"></font-awesome-icon>
-                  {{ item.createdAt }}
+                  <h5>{{ item.title }}</h5>
                 </div>
                 <div class="col">
-                  <div class="float-right">
+                  <div class="float-lg-right">
                     <font-awesome-icon icon="thumbs-up"></font-awesome-icon>
                     {{ item.positive }}
                     <font-awesome-icon icon="thumbs-down"></font-awesome-icon>
@@ -22,16 +20,14 @@
               </div>
               <div class="border-top my-4"></div>
               <!-- Horizontal separator -->
-              <h5>{{ item.title }}</h5>
               <b-card-text>
                 {{ item.description }}
               </b-card-text>
               <!-- Link to post -->
             <b-link class="stretched-link" :to="'/post/' + item.id" v-if="userData.isLoggedIn"/>
-            </div>
+            </b-card-body>
           </b-card>
-        </b-col>
-      </b-row>
+          </b-card-group>
     </b-container>
   </div>
 </template>

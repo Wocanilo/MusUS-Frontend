@@ -80,7 +80,13 @@
                 </b-form-group>
 
                 <div class="text-center">
-                  <b-button type="submit" variant="primary">Create Post</b-button>
+                    <b-form-invalid-feedback :state="form.swearing">
+                        Swearing not allowed.
+                    </b-form-invalid-feedback>
+                    <b-form-invalid-feedback :state="form.postsLimit">
+                        Limit of posts reached.
+                    </b-form-invalid-feedback>
+                  <b-button type="submit" class="mt-1" variant="primary">Create Post</b-button>
                 </div>
               </b-form>
             </b-jumbotron>
@@ -119,7 +125,9 @@ export default {
         file: null,
         description: "",
         tags: [],
-        visibility: ""
+        visibility: "",
+        swearing: true,
+        postsLimit: true
       }
     };
   },
@@ -150,7 +158,12 @@ export default {
         .then(response => {
             if (response.data.status == 200) {
             this.$router.push("/post/" + response.data.postId);
-            } else {
+            }else if(response.data.status == 601){
+              this.form.swearing = false;
+            }else if(response.data.status == 602){
+              this.form.postsLimit = false;
+            }
+             else {
             this.form.validForm = false;
             }
         })

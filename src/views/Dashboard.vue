@@ -40,39 +40,33 @@
       <!-- Small screns -->
       <div class="row d-md-none">
         <div class="col">
-          <div class="input-group mb-2">
+          <div class="input-group mb-2 ml-1 mr-1">
             <div class="input-group-prepend">
               <div class="input-group-text">
                 <font-awesome-icon icon="search"></font-awesome-icon>
               </div>
             </div>
-
-            <input type="text" class="form-control" id="search" placeholder="Search" />
+              <b-input type="text" id="search" class="mr-2"  :placeholder="searchType == 'tagsPosts' ? 'Search by tag' : 'Search by title'" v-model="search" @keyup="searchPostTimer"></b-input>
           </div>
         </div>
       </div>
 
       <div class="row d-md-none">
-        <div class="col">
-          <div class="btn-group btn-group-toggle input-group-append" data-toggle="buttons">
-            <label class="btn btn-primary active">
-              <input type="radio" name="searchType" id="following" autocomplete="off" checked />Following
-            </label>
-            <label class="btn btn-primary">
-              <input type="radio" name="searchType" id="trending" autocomplete="off" />Trending
-            </label>
-            <label class="btn btn-primary">
-              <input type="radio" name="searchType" id="tag" autocomplete="off" />Tag
-            </label>
-            <label class="btn btn-primary">
-              <input type="radio" name="searchType" id="User" autocomplete="off" />User
-            </label>
-          </div>
+        <div class="col text-center">
+                    <b-form-radio-group
+                      id="btn-radios-1"
+                      v-model="searchType"
+                      :options="options"
+                      buttons
+                      class="mr-1 ml-1"
+                      v-on:change="searchRadioChange"
+                      button-variant="info"
+                    ></b-form-radio-group>
         </div>
       </div>
 
-    <h3 class="text-center mt-3" v-if="cards.length == 0">No posts.</h3>
     <Cards v-bind:cards="cards"></Cards>
+    <UserCards v-bind:cards="userCards"></UserCards>
     </header>
   </div>
 </template>
@@ -81,11 +75,13 @@
 import { mapState } from "vuex";
 import axios from "axios";
 import Cards from "@/components/Cards.vue";
+import UserCards from "@/components/UserCards.vue";
 
 export default {
   name: "Dashboard",
   components: {
-    Cards
+    Cards,
+    UserCards
   },
   computed: mapState({
     config: state => state.config
@@ -96,11 +92,12 @@ export default {
       search: "",
       searchWaitingToExecute: null,
       cards: [],
+      userCards: [],
       options: [
           { text: 'Following', value: 'followingPosts' },
           { text: 'Trending', value: 'trendingPosts' },
           { text: 'Tag', value: 'tagsPosts' },
-          { text: 'User', value: 'user' }
+          { text: 'User', value: 'trendingUsers' }
         ]
     };
   },
@@ -147,7 +144,14 @@ export default {
           })
             .then(response => {
               if (response.data.status == 200) {
-                this.cards = response.data.data;
+                if(this.searchType != "trendingUsers"){
+                  this.cards = response.data.data;
+                  this.userCards = [];
+                }else{
+                  this.cards = [];
+                  this.userCards = response.data.data;
+                }
+                
               }
             })
             .then(error => {

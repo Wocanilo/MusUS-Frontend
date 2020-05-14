@@ -85,8 +85,11 @@
                   <b-form-invalid-feedback :state="form.cantDeleteComments">
                     Posts with comments can't be deleted.
                   </b-form-invalid-feedback>
-                  <b-button type="submit" variant="primary">Save changes</b-button>
-                  <b-button class="ml-1" v-on:click="deletePost" variant="danger">Delete Post</b-button>
+                  <b-form-invalid-feedback :state="form.swearing">
+                        Swearing not allowed.
+                    </b-form-invalid-feedback>
+                  <b-button type="submit" class="mt-1" variant="primary">Save changes</b-button>
+                  <b-button class="ml-1 mt-1" v-on:click="deletePost" variant="danger">Delete Post</b-button>
                 </div>
               </b-form>
             </b-jumbotron>
@@ -127,7 +130,8 @@ export default {
         tags: "",
         visibility: "",
         fileTooLarge: true,
-        cantDeleteComments: true
+        cantDeleteComments: true,
+        swearing: true
       }
     };
   },
@@ -228,7 +232,9 @@ export default {
             this.$router.push("/post/" + this.$route.params.id);
             }else if(response.data.status == 413){
                 this.form.fileTooLarge = false;
-            } 
+            }else if(response.data.status == 601){
+              this.form.swearing = false;
+            }
             else {
             this.form.validForm = false;
             }
