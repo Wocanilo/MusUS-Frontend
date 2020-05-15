@@ -1,7 +1,7 @@
 <template>
   <div class="app">
-    <b-nav class="navbar navbar-light sticky-top bg-white mb-2">
-      <b-navbar-brand class="mb-0 h1">
+    <b-navbar class="mb-2" variant="white" toggleable="sm" sticky>
+      <b-navbar-brand class="mb-0">
         <img
           src="@/assets/img/logo.svg"
           width="35"
@@ -11,7 +11,9 @@
         />
         <b-link class="ml-1" to="/">MusUS</b-link>
       </b-navbar-brand>
-
+    <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+    <b-collapse id="nav-collapse" is-nav>
+      <b-navbar-nav class="ml-auto text-center">
       <!-- Authenticated users -->
       <div v-if="userData.isLoggedIn">
         <b-link class="mr-3" to="/dashboard">Dashboard</b-link>
@@ -25,7 +27,9 @@
         <b-link class="mr-3" to="/login">Login</b-link>
         <b-link to="/signup">Signup</b-link>
       </div>
-    </b-nav>
+    </b-navbar-nav>
+    </b-collapse>
+    </b-navbar>
     <router-view></router-view>
   </div>
 </template>

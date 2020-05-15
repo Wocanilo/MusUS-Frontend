@@ -8,10 +8,10 @@
             <blockquote class="blockquote text-center">
                 <h1 class="mb-0">{{ post.title }}</h1>
                 <b-link :to="'/profile/' + post.userId">@{{ post.username }}</b-link>
-                <form action="#">
+                <b-form>
                   <button v-on:click="followUser" class="btn btn-link" v-if="post.userId != userData.userId && userData.followedUsers.indexOf(post.userId) < 0">Follow</button>
                   <button v-on:click="unFollowUser" class="btn btn-link" v-if="post.userId != userData.userId && userData.followedUsers.indexOf(post.userId) >= 0">Unfollow</button>
-                </form>
+                </b-form>
             </blockquote>
           </b-col>
         </b-row>
@@ -239,7 +239,8 @@ export default {
     commentLength(){
       return this.comment.length;
     },
-    followUser(){
+    followUser(evt){
+        evt.preventDefault();
         if(!this.followBlock){
           this.followBlock = true;
           let formData = new FormData();
@@ -268,7 +269,8 @@ export default {
         }
 
     },
-    unFollowUser(){
+    unFollowUser(evt){
+      evt.preventDefault();
       if(!this.followBlock){
         this.followBlock = true;
         let formData = new FormData();
