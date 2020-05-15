@@ -10,7 +10,7 @@
               @{{ profile.username }}
               <footer class="text-muted">
                 <a :href="'mailto:' + profile.email">{{ profile.email }}</a>
-                <form action="#">
+                <form>
                   <button v-on:click="followUser" class="btn btn-link" v-if="parseInt($route.params.id) != userData.userId && userData.followedUsers.indexOf(parseInt($route.params.id)) < 0">Follow</button>
                   <button v-on:click="unFollowUser" class="btn btn-link" v-if="parseInt($route.params.id) != userData.userId && userData.followedUsers.indexOf(parseInt($route.params.id)) >= 0">Unfollow</button>                </form>
               </footer>
@@ -108,7 +108,8 @@ export default {
           this.error = error;
         });
     },
-    followUser(){
+    followUser(evt){
+        evt.preventDefault();
         if(!this.followBlock){
           this.followBlock = true;
           let formData = new FormData();
@@ -138,7 +139,8 @@ export default {
           this.followBlock = false;
         }
     },
-    unFollowUser(){
+    unFollowUser(evt){
+      evt.preventDefault();
       if(!this.followBlock){
         this.followBlock = true;
         let formData = new FormData();
