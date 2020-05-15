@@ -4,7 +4,11 @@
       <h1 class="text-center">Login</h1>
     </div>
     <!-- Trees separator -->
-    <img src="@/assets/img/forest.jpg" class="img-fluid w-100" alt="MusUS logo" />
+    <img
+      src="@/assets/img/forest.jpg"
+      class="img-fluid w-100"
+      alt="MusUS logo"
+    />
     <!-- Content -->
     <section>
       <b-container>
@@ -32,9 +36,10 @@
                 </b-form-group>
 
                 <div class="text-center">
-                  <b-form-invalid-feedback
-                    :state="form.validForm"
-                  >Check username and password for errors</b-form-invalid-feedback>
+                  <b-form-invalid-feedback :state="form.validForm"
+                    >Check username and password for
+                    errors</b-form-invalid-feedback
+                  >
                   <b-button type="submit" variant="primary">Login</b-button>
                 </div>
               </b-form>
@@ -83,7 +88,7 @@ export default {
       })
         .then(response => {
           if (response.data.status == 200) {
-            this.$store.commit('login', response.data.userData)
+            this.$store.commit("login", response.data.userData);
             this.$router.push("/");
           } else {
             this.form.validForm = false;

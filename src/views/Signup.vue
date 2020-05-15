@@ -4,7 +4,11 @@
       <h1 class="text-center">Signup</h1>
     </div>
     <!-- Trees separator -->
-    <img src="@/assets/img/forest.jpg" class="img-fluid w-100" alt="MusUS logo" />
+    <img
+      src="@/assets/img/forest.jpg"
+      class="img-fluid w-100"
+      alt="MusUS logo"
+    />
     <!-- Content -->
     <section>
       <b-container>
@@ -57,7 +61,10 @@
                     required
                   ></b-form-input>
                 </b-form-group>
-                <b-form-group label="Repeat Password:" label-for="repeatPassword">
+                <b-form-group
+                  label="Repeat Password:"
+                  label-for="repeatPassword"
+                >
                   <b-form-input
                     id="repeatPassword"
                     v-model="form.repeatPassword"
@@ -66,13 +73,18 @@
                     :state="passwordsMatch"
                     required
                   ></b-form-input>
-                  <b-form-invalid-feedback :state="passwordsMatch">Passwords don't match</b-form-invalid-feedback>
-                  <b-form-valid-feedback :state="passwordsMatch">Passwords match</b-form-valid-feedback>
+                  <b-form-invalid-feedback :state="passwordsMatch"
+                    >Passwords don't match</b-form-invalid-feedback
+                  >
+                  <b-form-valid-feedback :state="passwordsMatch"
+                    >Passwords match</b-form-valid-feedback
+                  >
                 </b-form-group>
                 <div class="text-center">
-                  <b-form-invalid-feedback
-                    :state="form.validForm"
-                  >Username or Email already registered</b-form-invalid-feedback>
+                  <b-form-invalid-feedback :state="form.validForm"
+                    >Username or Email already
+                    registered</b-form-invalid-feedback
+                  >
                   <b-button type="submit" variant="primary">Signup</b-button>
                 </div>
               </b-form>

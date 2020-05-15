@@ -11,24 +11,26 @@
         />
         <b-link class="ml-1" to="/">MusUS</b-link>
       </b-navbar-brand>
-    <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
-    <b-collapse id="nav-collapse" is-nav>
-      <b-navbar-nav class="ml-auto text-center">
-      <!-- Authenticated users -->
-      <div v-if="userData.isLoggedIn">
-        <b-link class="mr-3" to="/dashboard">Dashboard</b-link>
-        <b-link class="mr-3" to="/createPost">Post</b-link>
-          <b-link class="mr-3" :to="'/profile/' + userData.userId">{{ userData.username }}</b-link>
-        <b-link @click="logout">Logout</b-link>
-      </div>
+      <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+      <b-collapse id="nav-collapse" is-nav>
+        <b-navbar-nav class="ml-auto text-center">
+          <!-- Authenticated users -->
+          <div v-if="userData.isLoggedIn">
+            <b-link class="mr-3" to="/dashboard">Dashboard</b-link>
+            <b-link class="mr-3" to="/createPost">Post</b-link>
+            <b-link class="mr-3" :to="'/profile/' + userData.userId">{{
+              userData.username
+            }}</b-link>
+            <b-link @click="logout">Logout</b-link>
+          </div>
 
-      <!-- Anonymous users -->
-      <div v-else>
-        <b-link class="mr-3" to="/login">Login</b-link>
-        <b-link to="/signup">Signup</b-link>
-      </div>
-    </b-navbar-nav>
-    </b-collapse>
+          <!-- Anonymous users -->
+          <div v-else>
+            <b-link class="mr-3" to="/login">Login</b-link>
+            <b-link to="/signup">Signup</b-link>
+          </div>
+        </b-navbar-nav>
+      </b-collapse>
     </b-navbar>
     <router-view></router-view>
   </div>
@@ -40,8 +42,7 @@ import axios from "axios";
 
 export default {
   name: "App",
-  components: {
-  },
+  components: {},
   computed: mapState({
     userData: status => status.account,
     config: state => state.config
@@ -55,8 +56,8 @@ export default {
         withCredentials: true
       });
       this.$store.commit("logout");
-      if(this.$router.currentRoute.path != "/"){
-          this.$router.push("/"); 
+      if (this.$router.currentRoute.path != "/") {
+        this.$router.push("/");
       }
     }
   }

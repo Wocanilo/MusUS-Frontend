@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard">
     <header>
-      <div class="container-fluid">
+      <div class="container">
         <div class="row">
           <div class="col">
             <h1 class="text-center">Dashboard</h1>
@@ -19,7 +19,18 @@
                       <font-awesome-icon icon="search"></font-awesome-icon>
                     </div>
                   </div>
-                  <b-input type="text" id="search" :placeholder="searchType == 'tagsPosts' ? 'Search by tag' : 'Search by title'" v-model="search" @keyup="searchPostTimer" :disabled="searchType == 'trendingUsers'"></b-input>
+                  <b-input
+                    type="text"
+                    id="search"
+                    :placeholder="
+                      searchType == 'tagsPosts'
+                        ? 'Search by tag'
+                        : 'Search by title'
+                    "
+                    v-model="search"
+                    @keyup="searchPostTimer"
+                    :disabled="searchType == 'trendingUsers'"
+                  ></b-input>
                   <b-input-group-prepend>
                     <b-form-radio-group
                       id="btn-radios-1"
@@ -36,38 +47,50 @@
           </div>
         </div>
 
-      <!-- Small screns -->
-      <div class="row d-md-none">
-        <div class="col">
-          <div class="input-group mb-2 ml-1 mr-1">
-            <div class="input-group-prepend">
-              <div class="input-group-text">
-                <font-awesome-icon icon="search"></font-awesome-icon>
+        <!-- Small screns -->
+        <div class="row d-md-none">
+          <div class="col">
+            <div class="input-group mb-2 ml-1 mr-1">
+              <div class="input-group-prepend">
+                <div class="input-group-text">
+                  <font-awesome-icon icon="search"></font-awesome-icon>
+                </div>
               </div>
+              <b-input
+                type="text"
+                id="search"
+                class="mr-2"
+                :placeholder="
+                  searchType == 'tagsPosts'
+                    ? 'Search by tag'
+                    : 'Search by title'
+                "
+                v-model="search"
+                @keyup="searchPostTimer"
+                :disabled="searchType == 'trendingUsers'"
+              ></b-input>
             </div>
-              <b-input type="text" id="search" class="mr-2"  :placeholder="searchType == 'tagsPosts' ? 'Search by tag' : 'Search by title'" v-model="search" @keyup="searchPostTimer" :disabled="searchType == 'trendingUsers'"></b-input>
+          </div>
+        </div>
+
+        <div class="row d-md-none">
+          <div class="col text-center">
+            <b-form-radio-group
+              id="btn-radios-1"
+              v-model="searchType"
+              :options="options"
+              buttons
+              class="mr-1 ml-1"
+              v-on:change="searchRadioChange"
+              button-variant="info"
+            ></b-form-radio-group>
           </div>
         </div>
       </div>
-
-      <div class="row d-md-none">
-        <div class="col text-center">
-                    <b-form-radio-group
-                      id="btn-radios-1"
-                      v-model="searchType"
-                      :options="options"
-                      buttons
-                      class="mr-1 ml-1"
-                      v-on:change="searchRadioChange"
-                      button-variant="info"
-                    ></b-form-radio-group>
-        </div>
-      </div>
-    </div>
-
-    <Cards v-bind:cards="cards"></Cards>
-    <UserCards v-bind:cards="userCards"></UserCards>
     </header>
+
+      <Cards v-bind:cards="cards"></Cards>
+      <UserCards v-bind:cards="userCards"></UserCards>
   </div>
 </template>
 
@@ -94,74 +117,73 @@ export default {
       cards: [],
       userCards: [],
       options: [
-          { text: 'Following', value: 'followingPosts' },
-          { text: 'Trending', value: 'trendingPosts' },
-          { text: 'Tag', value: 'tagsPosts' },
-          { text: 'User', value: 'trendingUsers' }
-        ]
+        { text: "Following", value: "followingPosts" },
+        { text: "Trending", value: "trendingPosts" },
+        { text: "Tag", value: "tagsPosts" },
+        { text: "User", value: "trendingUsers" }
+      ]
     };
   },
   mounted() {
-      axios({
-        method: "GET",
-        url: this.config.apiBaseUrl + "getPosts.php",
-        withCredentials: true,
-        params: {
-          action: this.searchType,
-          search: this.search
+    axios({
+      method: "GET",
+      url: this.config.apiBaseUrl + "getPosts.php",
+      withCredentials: true,
+      params: {
+        action: this.searchType,
+        search: this.search
+      }
+    })
+      .then(response => {
+        if (response.data.status == 200) {
+          this.cards = response.data.data;
         }
       })
-        .then(response => {
-          if (response.data.status == 200) {
-            this.cards = response.data.data;
-          }
-        })
-        .then(error => {
-          this.error = error;
-        });
+      .then(error => {
+        this.error = error;
+      });
   },
   methods: {
-    searchRadioChange(value){
+    searchRadioChange(value) {
       this.searchType = value;
       this.searchPosts();
     },
-    searchPostTimer(){
-      if(this.searchWaitingToExecute == null){
+    searchPostTimer() {
+      if (this.searchWaitingToExecute == null) {
         this.searchWaitingToExecute = this.search;
         setTimeout(this.searchPosts, 200);
       }
     },
-    searchPosts(){
-          if(this.searchWaitingToExecute == this.search){
-          axios({
-            method: "GET",
-            url: this.config.apiBaseUrl + "getPosts.php",
-            withCredentials: true,
-            params: {
-              action: this.searchType,
-              search: this.search
+    searchPosts() {
+      if (this.searchWaitingToExecute == this.search) {
+        axios({
+          method: "GET",
+          url: this.config.apiBaseUrl + "getPosts.php",
+          withCredentials: true,
+          params: {
+            action: this.searchType,
+            search: this.search
+          }
+        })
+          .then(response => {
+            if (response.data.status == 200) {
+              if (this.searchType != "trendingUsers") {
+                this.cards = response.data.data;
+                this.userCards = [];
+              } else {
+                this.cards = [];
+                this.userCards = response.data.data;
+              }
             }
           })
-            .then(response => {
-              if (response.data.status == 200) {
-                if(this.searchType != "trendingUsers"){
-                  this.cards = response.data.data;
-                  this.userCards = [];
-                }else{
-                  this.cards = [];
-                  this.userCards = response.data.data;
-                }
-                
-              }
-            })
-            .then(error => {
-              this.error = error;
-            });
-            this.searchWaitingToExecute = null;
-          }else{
-            this.searchWaitingToExecute = null;
-            this.searchPostTimer();
-          }
+          .then(error => {
+            this.error = error;
+          });
+        this.searchWaitingToExecute = null;
+      } else {
+        this.searchWaitingToExecute = null;
+        this.searchPostTimer();
+      }
     }
   }
 };

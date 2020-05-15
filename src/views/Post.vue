@@ -6,12 +6,32 @@
         <b-row>
           <b-col>
             <blockquote class="blockquote text-center">
-                <h1 class="mb-0">{{ post.title }}</h1>
-                <b-link :to="'/profile/' + post.userId">@{{ post.username }}</b-link>
-                <b-form>
-                  <button v-on:click="followUser" class="btn btn-link" v-if="post.userId != userData.userId && userData.followedUsers.indexOf(post.userId) < 0">Follow</button>
-                  <button v-on:click="unFollowUser" class="btn btn-link" v-if="post.userId != userData.userId && userData.followedUsers.indexOf(post.userId) >= 0">Unfollow</button>
-                </b-form>
+              <h1 class="mb-0">{{ post.title }}</h1>
+              <b-link :to="'/profile/' + post.userId"
+                >@{{ post.username }}</b-link
+              >
+              <b-form>
+                <button
+                  v-on:click="followUser"
+                  class="btn btn-link"
+                  v-if="
+                    post.userId != userData.userId &&
+                      userData.followedUsers.indexOf(post.userId) < 0
+                  "
+                >
+                  Follow
+                </button>
+                <button
+                  v-on:click="unFollowUser"
+                  class="btn btn-link"
+                  v-if="
+                    post.userId != userData.userId &&
+                      userData.followedUsers.indexOf(post.userId) >= 0
+                  "
+                >
+                  Unfollow
+                </button>
+              </b-form>
             </blockquote>
           </b-col>
         </b-row>
@@ -20,25 +40,28 @@
 
     <section v-if="post">
       <b-container class="text-center">
-      <b-overlay :show="showHeartFull || showHeartNotFull || showHeartBroken">
-        <img
-          :src="post.isExternal ? post.URL : config.apiBaseUrl + post.URL"
-          class="img-fluid"
-          alt=""
-          v-on:click="votePicture"
-        />
-      <template v-slot:overlay>
-        <div class="text-center" v-if="showHeartFull">
-          <b-icon icon="heart-fill" font-scale="5"></b-icon>
-        </div>
-        <div class="text-center" v-if="showHeartNotFull">
-          <b-icon icon="heart" font-scale="5"></b-icon>
-        </div>
-        <div class="text-center" v-if="showHeartBroken">
-          <font-awesome-icon icon="heart-broken" size="5x"></font-awesome-icon>
-        </div>
-      </template>
-    </b-overlay>
+        <b-overlay :show="showHeartFull || showHeartNotFull || showHeartBroken">
+          <img
+            :src="post.isExternal ? post.URL : config.apiBaseUrl + post.URL"
+            class="img-fluid"
+            alt=""
+            v-on:click="votePicture"
+          />
+          <template v-slot:overlay>
+            <div class="text-center" v-if="showHeartFull">
+              <b-icon icon="heart-fill" font-scale="5"></b-icon>
+            </div>
+            <div class="text-center" v-if="showHeartNotFull">
+              <b-icon icon="heart" font-scale="5"></b-icon>
+            </div>
+            <div class="text-center" v-if="showHeartBroken">
+              <font-awesome-icon
+                icon="heart-broken"
+                size="5x"
+              ></font-awesome-icon>
+            </div>
+          </template>
+        </b-overlay>
       </b-container>
       <b-container>
         <!-- Post Data -->
@@ -53,7 +76,19 @@
           </b-col>
           <b-col class="mb-2">
             <div class="float-right">
-              <font-awesome-icon icon="thumbs-up" class="mr-1" v-on:click="votePicture"></font-awesome-icon>{{ post.positive }}<font-awesome-icon class="ml-1 mr-1" icon="thumbs-down" id="thumbsDown" v-on:click="votePicture"></font-awesome-icon>{{ post.negative }}
+              <font-awesome-icon
+                icon="thumbs-up"
+                class="mr-1"
+                v-on:click="votePicture"
+              ></font-awesome-icon
+              >{{ post.positive
+              }}<font-awesome-icon
+                class="ml-1 mr-1"
+                icon="thumbs-down"
+                id="thumbsDown"
+                v-on:click="votePicture"
+              ></font-awesome-icon
+              >{{ post.negative }}
             </div>
           </b-col>
         </b-row>
@@ -66,7 +101,13 @@
         <div class="row" v-if="post.tags.length != 0">
           <div class="col text-center">
             <font-awesome-icon icon="tags"></font-awesome-icon>
-              <b-badge class="ml-1" variant="info" v-for="item in post.tags" :key="item.id">{{item.tag}} </b-badge>
+            <b-badge
+              class="ml-1"
+              variant="info"
+              v-for="item in post.tags"
+              :key="item.id"
+              >{{ item.tag }}
+            </b-badge>
           </div>
         </div>
       </b-container>
@@ -101,8 +142,22 @@
                       :state="isValidComment"
                       required
                     ></b-form-textarea>
-                    <p class="float-right">{{ commentLength() }}/140 characters</p>
-                    <b-button type="submit" block variant="dark" :disabled="!(comment != '' || comment.length > 140 || !disableCommentButton)">Post</b-button>
+                    <p class="float-right">
+                      {{ commentLength() }}/140 characters
+                    </p>
+                    <b-button
+                      type="submit"
+                      block
+                      variant="dark"
+                      :disabled="
+                        !(
+                          comment != '' ||
+                          comment.length > 140 ||
+                          !disableCommentButton
+                        )
+                      "
+                      >Post</b-button
+                    >
                   </b-form-group>
                 </b-form>
               </div>
@@ -110,7 +165,6 @@
           </b-col>
         </b-row>
       </b-container>
-
     </section>
   </div>
 </template>
@@ -118,7 +172,7 @@
 <script>
 import { mapState } from "vuex";
 import axios from "axios";
-import Comments from "@/components/Comments.vue"
+import Comments from "@/components/Comments.vue";
 
 export default {
   name: "Post",
@@ -129,7 +183,7 @@ export default {
   computed: mapState({
     config: state => state.config,
     userData: state => state.account,
-    isValidComment: function(){
+    isValidComment: function() {
       return this.comment != "" && this.comment.length <= 140;
     }
   }),
@@ -186,7 +240,7 @@ export default {
           this.error = error;
         });
     },
-    loadComments(){
+    loadComments() {
       axios({
         method: "GET",
         url: this.config.apiBaseUrl + "comment.php",
@@ -204,7 +258,7 @@ export default {
           this.error = error;
         });
     },
-    commentPost(evt){
+    commentPost(evt) {
       evt.preventDefault();
       // Disable button
       this.disableCommentButton = true;
@@ -236,17 +290,17 @@ export default {
           this.disableCommentButton = false;
         });
     },
-    commentLength(){
+    commentLength() {
       return this.comment.length;
     },
-    followUser(evt){
-        evt.preventDefault();
-        if(!this.followBlock){
-          this.followBlock = true;
-          let formData = new FormData();
-          formData.append("action", "follow");
-          formData.append("userId", this.post.userId);
-          
+    followUser(evt) {
+      evt.preventDefault();
+      if (!this.followBlock) {
+        this.followBlock = true;
+        let formData = new FormData();
+        formData.append("action", "follow");
+        formData.append("userId", this.post.userId);
+
         axios({
           method: "POST",
           url: this.config.apiBaseUrl + "profile.php",
@@ -255,9 +309,9 @@ export default {
         })
           .then(response => {
             if (response.data.status == 200) {
-                let newFollowedUsers = this.userData.followedUsers;
-                newFollowedUsers.push(this.post.userId);
-                this.$store.commit('updateFollowed', newFollowedUsers);
+              let newFollowedUsers = this.userData.followedUsers;
+              newFollowedUsers.push(this.post.userId);
+              this.$store.commit("updateFollowed", newFollowedUsers);
             } else {
               console.log(response.data);
             }
@@ -265,54 +319,56 @@ export default {
           .then(function(error) {
             console.log(error);
           });
-          this.followBlock = false;
-        }
-
+        this.followBlock = false;
+      }
     },
-    unFollowUser(evt){
+    unFollowUser(evt) {
       evt.preventDefault();
-      if(!this.followBlock){
+      if (!this.followBlock) {
         this.followBlock = true;
         let formData = new FormData();
         formData.append("action", "unfollow");
         formData.append("userId", this.post.userId);
-        
-      axios({
-        method: "POST",
-        url: this.config.apiBaseUrl + "profile.php",
-        withCredentials: true,
-        data: formData
-      })
-        .then(response => {
-          if (response.data.status == 200) {
-              let newFollowedUsers = this.userData.followedUsers;
-              let location = newFollowedUsers.indexOf(parseInt(this.post.userId));
-              if(location >=0) newFollowedUsers.splice(location, 1);
-              
-              this.$store.commit('updateFollowed', newFollowedUsers);
-          } else {
-            console.log(response.data);
-          }
+
+        axios({
+          method: "POST",
+          url: this.config.apiBaseUrl + "profile.php",
+          withCredentials: true,
+          data: formData
         })
-        .then(function(error) {
-          console.log(error);
-        });
+          .then(response => {
+            if (response.data.status == 200) {
+              let newFollowedUsers = this.userData.followedUsers;
+              let location = newFollowedUsers.indexOf(
+                parseInt(this.post.userId)
+              );
+              if (location >= 0) newFollowedUsers.splice(location, 1);
+
+              this.$store.commit("updateFollowed", newFollowedUsers);
+            } else {
+              console.log(response.data);
+            }
+          })
+          .then(function(error) {
+            console.log(error);
+          });
         this.followBlock = false;
       }
     },
-    votePicture(evt){
-      if(!this.voteBlock){
+    votePicture(evt) {
+      if (!this.voteBlock) {
         this.voteBlock = true;
         let newpictureVotes = this.userData.pictureVotes;
         let pictureID = parseInt(this.$route.params.id);
-        let voteType = evt.currentTarget.id == "thumbsDown" ?  "negative" : "positive"
+        let voteType =
+          evt.currentTarget.id == "thumbsDown" ? "negative" : "positive";
         let found = false;
         let foundType = null;
         let foundPosition = 0;
 
         // Find the id in the array
-        for(var i=0; i<newpictureVotes.length; i++){
-          if(newpictureVotes[i].id == pictureID){
+        for (var i = 0; i < newpictureVotes.length; i++) {
+          if (newpictureVotes[i].id == pictureID) {
             found = true;
             foundPosition = i;
             foundType = newpictureVotes[i].isPositive;
@@ -320,83 +376,84 @@ export default {
           }
         }
 
-      if(!found){
-        axios({
-          method: "GET",
-          url: this.config.apiBaseUrl + "getPosts.php",
-          withCredentials: true,
-          params: {
-            pictureId: pictureID,
-            action: "votePost",
-            type: voteType
-          }
-        })
-          .then(response => {
-            if (response.data.status == 200) {
-                newpictureVotes.push({"id": pictureID, "isPositive": voteType == "negative" ? 0 : 1});
-                this.$store.commit('updatePictureVotes', newpictureVotes);
+        if (!found) {
+          axios({
+            method: "GET",
+            url: this.config.apiBaseUrl + "getPosts.php",
+            withCredentials: true,
+            params: {
+              pictureId: pictureID,
+              action: "votePost",
+              type: voteType
+            }
+          })
+            .then(response => {
+              if (response.data.status == 200) {
+                newpictureVotes.push({
+                  id: pictureID,
+                  isPositive: voteType == "negative" ? 0 : 1
+                });
+                this.$store.commit("updatePictureVotes", newpictureVotes);
 
-                if(voteType == "negative"){
+                if (voteType == "negative") {
                   this.showHeartBroken = true;
                   this.post.negative++;
-                }else{
+                } else {
                   this.showHeartFull = true;
                   this.post.positive++;
                 }
-                
-                
+
                 //Waste 1 second
                 setTimeout(() => {
                   this.showHeartFull = false;
                   this.showHeartBroken = false;
                   this.voteBlock = false;
-                }, 600)
-            } else {
-              console.log(response.data);
+                }, 600);
+              } else {
+                console.log(response.data);
+              }
+            })
+            .then(function(error) {
+              console.log(error);
+            });
+        } else {
+          axios({
+            method: "GET",
+            url: this.config.apiBaseUrl + "getPosts.php",
+            withCredentials: true,
+            params: {
+              pictureId: pictureID,
+              action: "unVotePost"
             }
           })
-          .then(function(error) {
-            console.log(error);
-          });
-      }else{
-        axios({
-          method: "GET",
-          url: this.config.apiBaseUrl + "getPosts.php",
-          withCredentials: true,
-          params: {
-            pictureId: pictureID,
-            action: "unVotePost"
-          }
-        })
+            .then(response => {
+              if (response.data.status == 200) {
+                if (foundPosition >= 0)
+                  newpictureVotes.splice(foundPosition, 1);
 
-          .then(response => {
-            if (response.data.status == 200) {
-                if(foundPosition >=0) newpictureVotes.splice(foundPosition, 1);
-
-                this.$store.commit('updatePictureVotes', newpictureVotes);
+                this.$store.commit("updatePictureVotes", newpictureVotes);
                 this.showHeartNotFull = true;
 
-                if(foundType == 0){
+                if (foundType == 0) {
                   this.post.negative--;
-                }else{
+                } else {
                   this.post.positive--;
                 }
-                
+
                 //Waste 1 second
                 setTimeout(() => {
                   this.showHeartNotFull = false;
                   this.voteBlock = false;
-                }, 600)
-            } else {
-              console.log(response.data);
-            }
-          })
-          .then(function(error) {
-            console.log(error);
-          });
+                }, 600);
+              } else {
+                console.log(response.data);
+              }
+            })
+            .then(function(error) {
+              console.log(error);
+            });
+        }
       }
-      }
-
     }
   }
 };
