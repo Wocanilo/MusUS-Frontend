@@ -35,7 +35,6 @@
             </form>
           </div>
         </div>
-      </div>
 
       <!-- Small screns -->
       <div class="row d-md-none">
@@ -46,7 +45,7 @@
                 <font-awesome-icon icon="search"></font-awesome-icon>
               </div>
             </div>
-              <b-input type="text" id="search" class="mr-2"  :placeholder="searchType == 'tagsPosts' ? 'Search by tag' : 'Search by title'" v-model="search" @keyup="searchPostTimer"></b-input>
+              <b-input type="text" id="search" class="mr-2"  :placeholder="searchType == 'tagsPosts' ? 'Search by tag' : 'Search by title'" v-model="search" @keyup="searchPostTimer" :disabled="searchType == 'trendingUsers'"></b-input>
           </div>
         </div>
       </div>
@@ -64,6 +63,7 @@
                     ></b-form-radio-group>
         </div>
       </div>
+    </div>
 
     <Cards v-bind:cards="cards"></Cards>
     <UserCards v-bind:cards="userCards"></UserCards>
