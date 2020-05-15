@@ -167,7 +167,7 @@ export default {
         url: "",
         file: null,
         description: "",
-        tags: "",
+        tags: [],
         visibility: "",
         fileTooLarge: true,
         cantDeleteComments: true,

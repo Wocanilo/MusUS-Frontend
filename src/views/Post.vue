@@ -70,7 +70,7 @@
             <font-awesome-icon icon="calendar"></font-awesome-icon>
             {{ post.createdAt }}
           </b-col>
-          <b-col class="text-center" v-if="post.userId == userData.userId">
+          <b-col class="text-center d-none d-sm-block" v-if="post.userId == userData.userId">
             <font-awesome-icon icon="edit"></font-awesome-icon>
             <b-link class="ml-1" :to="$route.params.id + '/edit'">Edit</b-link>
           </b-col>
@@ -110,6 +110,14 @@
             </b-badge>
           </div>
         </div>
+
+        <!-- Edit on small screens -->
+        <b-row v-if="post.userId == userData.userId" class="d-block d-sm-none">
+          <b-col class="text-center mt-1">
+            <font-awesome-icon icon="edit"></font-awesome-icon>
+            <b-link class="ml-1" :to="$route.params.id + '/edit'">Edit</b-link>
+          </b-col>
+        </b-row>
       </b-container>
     </section>
 
