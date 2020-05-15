@@ -107,13 +107,7 @@ export default {
   components: {},
   computed: mapState({
     config: state => state.config,
-    userData: state => state.account,
-    passwordsMatch: function() {
-      return (
-        this.form.password == this.form.repeatPassword &&
-        this.form.repeatPassword.length > 0
-      );
-    }
+    userData: state => state.account
   }),
   // Form data
   data() {

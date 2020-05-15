@@ -88,6 +88,9 @@
                   <b-form-invalid-feedback :state="form.swearing">
                         Swearing not allowed.
                     </b-form-invalid-feedback>
+                  <b-form-invalid-feedback :state="form.cantChangeVisibility">
+                        Can't change visibility of a post with comments.
+                    </b-form-invalid-feedback>
                   <b-button type="submit" class="mt-1" variant="primary">Save changes</b-button>
                   <b-button class="ml-1 mt-1" v-on:click="deletePost" variant="danger">Delete Post</b-button>
                 </div>
@@ -110,13 +113,7 @@ export default {
   components: {},
   computed: mapState({
     config: state => state.config,
-    userData: state => state.account,
-    passwordsMatch: function() {
-      return (
-        this.form.password == this.form.repeatPassword &&
-        this.form.repeatPassword.length > 0
-      );
-    }
+    userData: state => state.account
   }),
   // Form data
   data() {
@@ -131,7 +128,8 @@ export default {
         visibility: "",
         fileTooLarge: true,
         cantDeleteComments: true,
-        swearing: true
+        swearing: true,
+        cantChangeVisibility: true
       }
     };
   },
@@ -234,6 +232,8 @@ export default {
                 this.form.fileTooLarge = false;
             }else if(response.data.status == 601){
               this.form.swearing = false;
+            }else if(response.data.status == 604){
+              this.form.cantChangeVisibility = false;
             }
             else {
             this.form.validForm = false;
