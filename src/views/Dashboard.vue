@@ -19,7 +19,7 @@
                       <font-awesome-icon icon="search"></font-awesome-icon>
                     </div>
                   </div>
-                  <b-input type="text" id="search" :placeholder="searchType == 'tagsPosts' ? 'Search by tag' : 'Search by title'" v-model="search" @keyup="searchPostTimer"></b-input>
+                  <b-input type="text" id="search" :placeholder="searchType == 'tagsPosts' ? 'Search by tag' : 'Search by title'" v-model="search" @keyup="searchPostTimer" :disabled="searchType == 'trendingUsers'"></b-input>
                   <b-input-group-prepend>
                     <b-form-radio-group
                       id="btn-radios-1"

@@ -7,7 +7,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     config: {
-      apiBaseUrl: "http://api.musus.wocat.xyz:8080/"
+      apiBaseUrl: "https://api.musus.wocat.xyz/"
     }
   },
   mutations: {},

@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <b-nav class="navbar navbar-light sticky-top bg-white mb-2">
-      <div class="navbar-brand mb-0 h1">
+      <b-navbar-brand class="mb-0 h1">
         <img
           src="@/assets/img/logo.svg"
           width="35"
@@ -10,7 +10,7 @@
           alt="MusUS logo"
         />
         <b-link class="ml-1" to="/">MusUS</b-link>
-      </div>
+      </b-navbar-brand>
 
       <!-- Authenticated users -->
       <div v-if="userData.isLoggedIn">
@@ -32,17 +32,24 @@
 
 <script>
 import { mapState } from "vuex";
+import axios from "axios";
 
 export default {
   name: "App",
   components: {
   },
   computed: mapState({
-    userData: status => status.account
+    userData: status => status.account,
+    config: state => state.config
   }),
   methods: {
-    logout(evt) {
-      evt.preventDefault();
+    logout() {
+      // Logout
+      axios({
+        method: "GET",
+        url: this.config.apiBaseUrl + "logout.php",
+        withCredentials: true
+      });
       this.$store.commit("logout");
       if(this.$router.currentRoute.path != "/"){
           this.$router.push("/"); 
