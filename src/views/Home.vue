@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div>
-      <h1 class="text-center">Lastest posts</h1>
+      <h1 class="text-center">Latest posts</h1>
     </div>
     <!-- Trees separator -->
     <img
