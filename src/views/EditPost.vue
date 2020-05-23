@@ -181,10 +181,18 @@ export default {
     $route: "loadPostData"
   },
   created() {
-    this.loadPostData();
+    if(!this.checkAnonymous()) this.loadPostData();
   },
   // Methods available to the view
   methods: {
+    checkAnonymous(){
+      if(this.userData.isLoggedIn == false){
+            this.$store.commit("setAnonymousError", false);
+            this.$router.push("/login");
+            return true;
+      }
+      return false;
+    },
     loadPostData() {
       this.error = this.post = null;
       this.loading = true;

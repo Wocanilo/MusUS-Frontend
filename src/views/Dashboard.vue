@@ -107,7 +107,8 @@ export default {
     UserCards
   },
   computed: mapState({
-    config: state => state.config
+    config: state => state.config,
+    userData: state => state.account
   }),
   data() {
     return {
@@ -123,6 +124,9 @@ export default {
         { text: "User", value: "trendingUsers" }
       ]
     };
+  },
+  created() {
+    this.checkAnonymous();
   },
   mounted() {
     axios({
@@ -144,6 +148,14 @@ export default {
       });
   },
   methods: {
+    checkAnonymous(){
+      if(this.userData.isLoggedIn == false){
+            this.$store.commit("setAnonymousError", false);
+            this.$router.push("/login");
+            return true;
+      }
+      return false;
+    },
     searchRadioChange(value) {
       this.searchType = value;
       this.searchPosts();

@@ -66,6 +66,9 @@ export default {
     config: state => state.config,
     userData: state => state.account
   }),
+  created() {
+    if(!this.userData.anonymousError) setTimeout(() => this.$store.commit("setAnonymousError", true), 1500);;
+  },
   // Form data
   data() {
     return {

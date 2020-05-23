@@ -1,7 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
-import account from "@/store/account";
 
 Vue.use(VueRouter);
 
@@ -59,20 +58,5 @@ const router = new VueRouter({
   base: "/",
   routes
 });
-
-
-
-let anonymousRoutes = ["Login", "Home", "Signup"];
-// It can also be implemented with meta fields
-router.beforeEach((to, from, next) => {
-  if (anonymousRoutes.indexOf(to.name) < 0 && !account.state.isLoggedIn){
-    account.mutations.setAnonymousError(account.state, false);
-    next({ name: 'Login' })
-  }
-  else {
-    if(to.name !== "Login") account.mutations.setAnonymousError(account.state, true);
-    next()
-  }
-})
 
 export default router;

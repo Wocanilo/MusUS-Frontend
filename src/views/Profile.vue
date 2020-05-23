@@ -77,8 +77,10 @@ export default {
     };
   },
   mounted() {
-    this.loadProfile(); // Load the data after the view has been rendered
-    this.loadPosts();
+    if(!this.checkAnonymous()){
+      this.loadProfile(); // Load the data after the view has been rendered
+      this.loadPosts();
+    }
   },
   watch: {
     // Call the method if the route changes
@@ -86,6 +88,14 @@ export default {
   },
   // Methods available to the view
   methods: {
+    checkAnonymous(){
+      if(this.userData.isLoggedIn == false){
+            this.$store.commit("setAnonymousError", false);
+            this.$router.push("/login");
+            return true;
+      }
+      return false;
+    },
     loadProfile() {
       this.error = this.post = null;
       this.loading = true;

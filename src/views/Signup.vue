@@ -52,6 +52,15 @@
                     required
                   ></b-form-input>
                 </b-form-group>
+                <b-form-group label="Phone:" label-for="phone">
+                  <b-form-input
+                    id="phone"
+                    v-model="form.phone"
+                    type="tel"
+                    placeholder="Phone"
+                    required
+                  ></b-form-input>
+                </b-form-group>
                 <b-form-group label="Password:" label-for="password">
                   <b-form-input
                     id="password"
@@ -124,6 +133,7 @@ export default {
         email: "",
         password: "",
         repeatPassword: "",
+        tel: "",
         validForm: true
       }
     };
@@ -144,6 +154,7 @@ export default {
             username: this.form.username,
             password: this.form.password,
             email: this.form.email,
+            phone: this.form.phone,
             repeatPassword: this.form.repeatPassword
           }
         })

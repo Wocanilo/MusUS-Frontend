@@ -213,8 +213,10 @@ export default {
     };
   },
   created() {
-    this.loadPost(); // Load the data after the view has been rendered
-    this.loadComments();
+    if(!this.checkAnonymous()){
+      this.loadPost(); // Load the data after the view has been rendered
+      this.loadComments();
+    }
   },
   watch: {
     // Call the method if the route changes
@@ -222,6 +224,14 @@ export default {
   },
   // Methods available to the view
   methods: {
+    checkAnonymous(){
+      if(this.userData.isLoggedIn == false){
+            this.$store.commit("setAnonymousError", false);
+            this.$router.push("/login");
+            return true;
+      }
+      return false;
+    },
     loadPost() {
       this.error = this.post = null;
       this.loading = true;

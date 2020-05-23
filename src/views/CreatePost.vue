@@ -158,8 +158,19 @@ export default {
       }
     };
   },
+  created() {
+    this.checkAnonymous();
+  },
   // Methods available to the view
   methods: {
+    checkAnonymous(){
+      if(this.userData.isLoggedIn == false){
+            this.$store.commit("setAnonymousError", false);
+            this.$router.push("/login");
+            return true;
+      }
+      return false;
+    },
     CreatePost(evt) {
       evt.preventDefault();
       let formData = new FormData();
