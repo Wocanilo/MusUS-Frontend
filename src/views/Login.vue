@@ -40,6 +40,9 @@
                     >Check username and password for
                     errors</b-form-invalid-feedback
                   >
+                  <b-form-invalid-feedback :state="userData.anonymousError"
+                    >Anonymous Access not allowed.</b-form-invalid-feedback
+                  >
                   <b-button type="submit" variant="primary">Login</b-button>
                 </div>
               </b-form>

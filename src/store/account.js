@@ -6,7 +6,8 @@ const state = {
   email: null,
   userId: null,
   followedUsers: [],
-  pictureVotes: []
+  pictureVotes: [],
+  anonymousError: true
 };
 
 const mutations = {
@@ -35,6 +36,9 @@ const mutations = {
   },
   updatePictureVotes(state, data) {
     state.pictureVotes = data;
+  },
+  setAnonymousError(state, data){
+    state.anonymousError = data;
   }
 };
 
